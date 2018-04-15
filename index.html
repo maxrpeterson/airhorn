@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>BR-BR-BR-BRRRRRRRRR</title>
+    <style media="screen">
+      body {
+        text-align: center;
+        overflow: hidden;
+      }
+      img {
+        width: auto;
+        height: 100vh;
+      }
+      .blocker {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        background-color: rgba(0,0,0,0);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="blocker"></div>
+    <audio>
+      <source src="./airhorn.mp3">
+    </audio>
+    <img src="./airhorn.png">
+    <script type="text/javascript">
+      var audioTag = document.querySelector('audio');
+      var playing = false;
+      function stopHorn() {
+        audioTag.pause();
+        audioTag.currentTime = 0;
+        playing = false;
+      }
+      function startHorn() {
+        if (!playing) {
+          audioTag.play();
+          playing = true;
+        }
+      }
+      document.body.addEventListener('touchstart', startHorn);
+      document.body.addEventListener('mousedown', startHorn);
+      document.body.addEventListener('mouseup', stopHorn);
+      document.body.addEventListener('touchend', stopHorn);
+    </script>
+  </body>
+</html>
