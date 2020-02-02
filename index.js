@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
 
   var audioTag = document.querySelector('audio');
   var button = document.querySelector('button');
-  var ctx = new AudioContext();
+  var ctx = new (window.AudioContext || window.webkitAudioContext)();
   var gain = ctx.createGain();
   var audioSource = ctx.createMediaElementSource(audioTag);
   audioSource.connect(gain);
