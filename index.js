@@ -1,17 +1,32 @@
 document.addEventListener('DOMContentLoaded', function onLoad() {
-  var attackTime = 0.05;
-  var releaseTime = 0.05;
+  const airhornUrl = 'airhorn.wav';
+  const airhornSampleRate = 44100;
+  const attackTime = 0.05;
+  const releaseTime = 0.05;
 
-  var audioTag = document.querySelector('audio');
-  var button = document.querySelector('button');
-  var ctx = new (window.AudioContext || window.webkitAudioContext)();
-  var gain = ctx.createGain();
-  var audioSource = ctx.createMediaElementSource(audioTag);
-  audioSource.connect(gain);
+  const audioTag = document.querySelector('audio');
+  const button = document.querySelector('button');
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const gain = ctx.createGain();
+
+  let airhornBufferArray;
+  let airhornBuffer;
+  let currentBufferSource;
+
+  gain.gain.value = 1;
+
   gain.connect(ctx.destination);
 
+  function playSound(buffer, output, time = 0) {
+    const bufferSource = ctx.createBufferSource();
+    bufferSource.buffer = buffer;
+    bufferSource.connect(output);
+    bufferSource.start(time);
+    return bufferSource;
+  }
+
   function stopHorn() {
-    var now = ctx.currentTime;
+    const now = ctx.currentTime;
     gain.gain.cancelScheduledValues(now);
     gain.gain.setValueAtTime(1, now);
     gain.gain.linearRampToValueAtTime(0, now + releaseTime);
@@ -24,21 +39,35 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     if (ctx.state === 'suspended') {
       ctx.resume();
     }
-
-    var now = ctx.currentTime;
-
-    audioTag.currentTime = 0;
-
-    gain.gain.cancelScheduledValues(now);
-    gain.gain.setValueAtTime(1, now + attackTime);
-
-    if (audioTag.paused) {
-      audioTag.play();
+    if (!airhornBufferArray) {
+      return;
     }
+    if (currentBufferSource) {
+      currentBufferSource.stop();
+      currentBufferSource.disconnect();
+    }
+
+    const now = ctx.currentTime;
+    gain.gain.cancelScheduledValues(now);
+    gain.gain.setValueAtTime(1, now);
+
+    currentBufferSource = playSound(airhornBuffer, gain);
   }
 
-  button.addEventListener('touchstart', startHorn);
-  button.addEventListener('mousedown', startHorn);
-  button.addEventListener('mouseup', stopHorn);
-  button.addEventListener('touchend', stopHorn);
+  fetch(airhornUrl)
+    .then(res => res.arrayBuffer())
+    .then(buff => airhornBufferArray = buff)
+    .then(buff => {
+      const decodeResult = ctx.decodeAudioData(buff, buff => airhornBuffer = buff);
+      if (decodeResult && typeof decodeResult.then === 'function') {
+        decodeResult.then(buff => airhornBuffer = airhornBuffer || buff);
+      }
+
+      // set up button listeners
+      button.addEventListener('touchstart', startHorn);
+      button.addEventListener('mousedown', startHorn);
+      button.addEventListener('mouseup', stopHorn);
+      button.addEventListener('touchend', stopHorn);
+    });
+
 });
