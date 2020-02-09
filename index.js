@@ -12,11 +12,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
   let airhornBuffer;
   let currentBufferSource;
 
-  function setAirhornBuffer(buffer) {
-    airhornBuffer = buffer;
-  }
-
-  function initialize() {
+  function initialize(cb) {
     ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
     gain = gain || ctx.createGain();
 
@@ -27,9 +23,19 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
       return;
     }
 
-    const decodeResult = ctx.decodeAudioData(airhornArrayBuffer, setAirhornBuffer);
+    const decodeResult = ctx.decodeAudioData(airhornArrayBuffer, buffer => {
+      airhornBuffer = buffer;
+      if (typeof cb === 'function') {
+        cb();
+      }
+    });
     if (!airhornBuffer && decodeResult && typeof decodeResult.then === 'function') {
-      decodeResult.then(setAirhornBuffer);
+      decodeResult.then(buffer => {
+        airhornBuffer = buffer;
+        if (typeof cb === 'function') {
+          cb();
+        }
+      });
     }
 
     initialized = true;
@@ -55,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
       e.preventDefault();
     }
     if (!initialized) {
-      initialize();
+      return initialize(startHorn);
     }
     if (ctx.state === 'suspended') {
       ctx.resume();
