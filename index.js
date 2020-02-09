@@ -79,6 +79,10 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     gain.gain.setValueAtTime(1, now);
 
     currentBufferSource = playSound(airhornBuffer, gain);
+
+    if (typeof ga === 'function') {
+      ga('send', 'event', 'Airhorn', 'BRRR');
+    }
   }
 
   fetch(airhornUrl)
