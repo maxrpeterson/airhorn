@@ -1,21 +1,39 @@
 document.addEventListener('DOMContentLoaded', function onLoad() {
   const airhornUrl = 'airhorn.wav';
-  const airhornSampleRate = 44100;
-  const attackTime = 0.05;
+  // const attackTime = 0.05;
   const releaseTime = 0.05;
 
-  const audioTag = document.querySelector('audio');
   const button = document.querySelector('button');
-  const ctx = new (window.AudioContext || window.webkitAudioContext)();
-  const gain = ctx.createGain();
 
-  let airhornBufferArray;
+  let initialized = false;
+  let ctx;
+  let gain;
+  let airhornArrayBuffer;
   let airhornBuffer;
   let currentBufferSource;
 
-  gain.gain.value = 1;
+  function setAirhornBuffer(buffer) {
+    airhornBuffer = buffer;
+  }
 
-  gain.connect(ctx.destination);
+  function initialize() {
+    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
+    gain = gain || ctx.createGain();
+
+    gain.gain.value = 1;
+    gain.connect(ctx.destination);
+
+    if (!airhornArrayBuffer) {
+      return;
+    }
+
+    const decodeResult = ctx.decodeAudioData(airhornArrayBuffer, setAirhornBuffer);
+    if (!airhornBuffer && decodeResult && typeof decodeResult.then === 'function') {
+      decodeResult.then(setAirhornBuffer);
+    }
+
+    initialized = true;
+  }
 
   function playSound(buffer, output, time = 0) {
     const bufferSource = ctx.createBufferSource();
@@ -36,10 +54,13 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     if (e instanceof TouchEvent) {
       e.preventDefault();
     }
+    if (!initialized) {
+      initialize();
+    }
     if (ctx.state === 'suspended') {
       ctx.resume();
     }
-    if (!airhornBufferArray) {
+    if (!airhornArrayBuffer) {
       return;
     }
     if (currentBufferSource) {
@@ -56,13 +77,8 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
 
   fetch(airhornUrl)
     .then(res => res.arrayBuffer())
-    .then(buff => airhornBufferArray = buff)
-    .then(buff => {
-      const decodeResult = ctx.decodeAudioData(buff, buff => airhornBuffer = buff);
-      if (decodeResult && typeof decodeResult.then === 'function') {
-        decodeResult.then(buff => airhornBuffer = airhornBuffer || buff);
-      }
-
+    .then(buff => airhornArrayBuffer = buff)
+    .then(() => {
       // set up button listeners
       button.addEventListener('touchstart', startHorn);
       button.addEventListener('mousedown', startHorn);
