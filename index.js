@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     gain.gain.cancelScheduledValues(now);
     gain.gain.setValueAtTime(1, now);
     gain.gain.linearRampToValueAtTime(0, now + releaseTime);
+    theButton.classList.remove('playing');
   }
 
   function startHorn(e) {
@@ -82,6 +83,8 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     gain.gain.setValueAtTime(1, now);
 
     currentBufferSource = playSound(airhornBuffer, gain);
+
+    theButton.classList.add('playing');
 
     if (typeof ga === 'function') {
       ga('send', 'event', 'Airhorn', 'BRRR');

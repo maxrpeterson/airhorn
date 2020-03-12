@@ -38,6 +38,14 @@
         background-repeat: no-repeat;
         background-position: center;
       }
+      .the-button.playing {
+        animation-name: jiggle;
+        animation-duration: 50ms;
+        animation-timing-function: linear;
+        animation-fill-mode: both;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
       .inited .tap-to-start {
         display: none;
       }
@@ -75,6 +83,15 @@
         }
         to {
           filter: hue-rotate(360deg);
+        }
+      }
+      @keyframes jiggle {
+        from {
+          transform: scale(1.03) rotate(-2deg);
+        }
+
+        to {
+          transform: scale(1.03) rotate(2deg);
         }
       }
     </style>
