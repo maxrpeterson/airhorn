@@ -1,19 +1,20 @@
+/* global ga */
 document.addEventListener('DOMContentLoaded', function onLoad() {
   const airhornUrl = 'airhorn.wav';
   // const attackTime = 0.05;
   const releaseTime = 0.05;
 
-  const button = document.querySelector('button');
+  const tapToStartButton = document.querySelector('.tap-to-start');
+  const theButton = document.querySelector('.the-button');
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  window.ctx = ctx;
 
-  let initialized = false;
-  let ctx;
   let gain;
   let airhornArrayBuffer;
   let airhornBuffer;
   let currentBufferSource;
 
   function initialize(cb) {
-    ctx = ctx || new (window.AudioContext || window.webkitAudioContext)();
     gain = gain || ctx.createGain();
 
     gain.gain.value = 1;
@@ -38,7 +39,15 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
       });
     }
 
-    initialized = true;
+    tapToStartButton.removeEventListener('click', initialize);
+
+    document.body.classList.add('inited');
+
+    // set up button listeners
+    theButton.addEventListener('touchstart', startHorn);
+    theButton.addEventListener('mousedown', startHorn);
+    theButton.addEventListener('mouseup', stopHorn);
+    theButton.addEventListener('touchend', stopHorn);
   }
 
   function playSound(buffer, output, time = 0) {
@@ -59,12 +68,6 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
   function startHorn(e) {
     if (e instanceof TouchEvent) {
       e.preventDefault();
-    }
-    if (!initialized) {
-      return initialize(startHorn);
-    }
-    if (ctx.state === 'suspended') {
-      ctx.resume();
     }
     if (!airhornArrayBuffer) {
       return;
@@ -89,11 +92,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     .then(res => res.arrayBuffer())
     .then(buff => airhornArrayBuffer = buff)
     .then(() => {
-      // set up button listeners
-      button.addEventListener('touchstart', startHorn);
-      button.addEventListener('mousedown', startHorn);
-      button.addEventListener('mouseup', stopHorn);
-      button.addEventListener('touchend', stopHorn);
+      tapToStartButton.addEventListener('click', initialize);
     });
 
 });
