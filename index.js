@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     if (typeof ga === 'function') {
       ga('send', 'event', 'Airhorn', 'stop');
     }
-}
+  }
 
   function startHorn(e) {
     if (e instanceof TouchEvent) {
