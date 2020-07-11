@@ -64,7 +64,11 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
     gain.gain.setValueAtTime(1, now);
     gain.gain.linearRampToValueAtTime(0, now + releaseTime);
     theButton.classList.remove('playing');
-  }
+
+    if (typeof ga === 'function') {
+      ga('send', 'event', 'Airhorn', 'stop');
+    }
+}
 
   function startHorn(e) {
     if (e instanceof TouchEvent) {
