@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name=viewport content="width=device-width, initial-scale=1">
 
-    <title>BR-BR-BR-BRRRRRRRRR</title>
+    <title>Airhorn - BR-BR-BR-BRRRRRRRRR</title>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
@@ -53,36 +53,40 @@
         animation-iteration-count: infinite;
         animation-direction: alternate;
       }
-      .inited .tap-to-start {
+      .rainbow-text {
+        color: #ff9955;
+        animation-name: rainbow;
+        animation-duration: 5s;
+        animation-timing-function: linear;
+        animation-iteration-count: infinite;
+        animation-fill-mode: both;
+      }
+      .inited .tap-to-start, .inited h1 {
         display: none;
+      }
+      .inited .tap-to-play {
+        display: inline;
       }
       .tap-to-start {
         z-index: 1;
         font-size: 24vmin;
-        color: #ff9955;
-        animation-name: rainbow;
-        animation-duration: 5s;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        animation-fill-mode: both;
       }
       .tap-to-play {
         display: none;
         color: #ff9955;
-        animation-name: rainbow;
-        animation-duration: 5s;
-        animation-timing-function: linear;
-        animation-iteration-count: infinite;
-        animation-fill-mode: both;
         animation-direction: reverse;
+      }
+      .tap-to-play, h1 {
         font-size: 10vmin;
         position: absolute;
         left: 0;
         top: 8vmin;
         width: 100%;
       }
-      .inited .tap-to-play {
-        display: inline;
+      h1 {
+        line-height: 1;
+        font-weight: normal;
+        margin: 0;
       }
       @keyframes rainbow {
         from {
@@ -104,11 +108,12 @@
     </style>
   </head>
   <body>
-    <button type="button" name="init" class="tap-to-start">
+    <h1 class="rainbow-text">AIRHORN</h1>
+    <button type="button" name="init" class="tap-to-start rainbow-text">
       Tap to start
     </button>
     <button type="button" name="button" class="the-button">
-      <span class="tap-to-play">TAP TO PLAY</span>
+      <span class="tap-to-play rainbow-text">TAP TO PLAY</span>
     </button>
 
     <script type="text/javascript" src="index.js?1"></script>
@@ -127,6 +132,8 @@
       {
         "@context": "http://schema.org/",
         "@type": "WebApplication",
+        "name": "Airhorn",
+        "description": "BR-BR-BR-BRRRRRRRRR!! The only club airhorn you'll ever need 😎🔊",
         "browserRequirements": "requires HTML5 support",
         "operatingSystem": "HTML5",
         "applicationCategory": "Multimedia",
