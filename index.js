@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function onLoad() {
   }
 
   function startHorn(e) {
-    if (e instanceof TouchEvent) {
+    if (typeof TouchEvent !== 'undefined' && e instanceof TouchEvent) {
       e.preventDefault();
     }
     if (!airhornArrayBuffer) {
